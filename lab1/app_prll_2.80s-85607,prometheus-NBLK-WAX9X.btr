@@ -1,0 +1,15 @@
+
+app_prll_2:85607 terminated with signal 6 at PC=7fe0e2a96a7c SP=7ffe8d491960.  Backtrace:
+/lib/x86_64-linux-gnu/libc.so.6(pthread_kill+0x12c)[0x7fe0e2a96a7c]
+/lib/x86_64-linux-gnu/libc.so.6(raise+0x16)[0x7fe0e2a42476]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0xd3)[0x7fe0e2a287f3]
+/lib/x86_64-linux-gnu/libgsl.so.27(+0x759e1)[0x7fe0e56759e1]
+/lib/x86_64-linux-gnu/libgsl.so.27(gsl_blas_dgemv+0x48)[0x7fe0e56649d8]
+parallel_2/Exec/app_prll_2(prll_gsl_blas_dgemv+0x28f)[0x5601f09b7fde]
+parallel_2/Exec/app_prll_2(ConjugateGradientsMethodIteration+0xbf)[0x5601f09b81f3]
+parallel_2/Exec/app_prll_2(ConjugateGradientsMethod+0x688)[0x5601f09b89ff]
+parallel_2/Exec/app_prll_2(CalcGridHeatDistribution+0x179)[0x5601f09b8c02]
+parallel_2/Exec/app_prll_2(main+0x16d)[0x5601f09b8da5]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x7fe0e2a29d90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x7fe0e2a29e40]
+parallel_2/Exec/app_prll_2(_start+0x25)[0x5601f09b7585]
