@@ -23,6 +23,7 @@ void prll_gsl_blas_dgemv(
     int cols,
     int* scounts, 
     int* displs) {
+
     int rank = 0;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int size = 0;
@@ -234,13 +235,22 @@ int main(int argc, char* argv[]) {
 
         if (argc != 1) fclose(in);
     } 
+    
+    double start = 0.0;
+    double finish = 0.0;
+    if (rank == 0) start = MPI_Wtime();
 
     gsl_vector* result = CalcGridHeatDistribution(gridMatrix);
-
+    
+    if (rank == 0) finish = MPI_Wtime();
+    
     if (0 == rank && result) {
         gsl_vector_fprintf(stdout, result, "%4lf ");
+        printf("Time is: %lf seconds.\n", finish - start);
+
         gsl_vector_free(result);
     }
+
     gsl_matrix_free(gridMatrix);
 
     MPI_Finalize();

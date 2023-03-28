@@ -1,7 +1,8 @@
 import numpy as np
 
-width=128
-height=128
+
+width=int(input())
+height=width
 
 matrix = np.random.rand(height, width)
 f = open("matrix_" + str(height)  + "_" + str(width) + ".dat", "w")

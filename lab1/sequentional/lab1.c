@@ -103,7 +103,6 @@ gsl_vector* ConjugateGradientsMethod(gsl_matrix* A, gsl_vector* B, gsl_vector* X
     double err = 0.0;
     double normB = gsl_blas_dnrm2(B);
 
-
     do {
         err = ConjugateGradientsMethodIteration(A, X, r, z, tmpVec, normB);
     } while (eps < err);
@@ -220,10 +219,7 @@ int main(int argc, char* argv[]) {
 
     gsl_vector* result = CalcGridHeatDistribution(gridMatrix);
     if (result) {
-        FILE* resultFile = fopen("res.dat", "wb");
-        assert(resultFile);
-        gsl_vector_fprintf(resultFile, result, "%4lf ");
-        fclose(resultFile);
+        gsl_vector_fprintf(stdout, result, "%4lf ");
         gsl_vector_free(result);
     }
     gsl_matrix_free(gridMatrix);

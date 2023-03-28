@@ -185,7 +185,7 @@ gsl_vector* ConjugateGradientsMethod(gsl_matrix* A, gsl_vector* B, gsl_vector* X
         displs[i] = (i == 0) ? 0 : displs[i-1] + scounts[i-1];
     }
 
-    double eps = 0.1;
+    double eps = 0.00001;
     double err = 0.0;
 
     do {
@@ -237,10 +237,6 @@ int main(int argc, char* argv[]) {
     int rank = 0;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
-    #include <unistd.h>
-    #include <sys/types.h>
-    printf("in thread[%d] pid is(%d)", rank, getpid());
-   
     gsl_matrix* gridMatrix = NULL;
 
     if (0 == rank) {
@@ -258,11 +254,20 @@ int main(int argc, char* argv[]) {
 
         if (argc != 1) fclose(in);
     } 
+    
+    double start = 0.0;
+    double finish = 0.0;
+
+    if (rank == 0) start = MPI_Wtime();
 
     gsl_vector* result = CalcGridHeatDistribution(gridMatrix);
-
+    
     if (0 == rank && result) {
+        finish = MPI_Wtime();
+
         gsl_vector_fprintf(stdout, result, "%4lf ");
+        printf("Time is: %lf in seconds.\n", finish - start);
+
         gsl_vector_free(result);
     }
     gsl_matrix_free(gridMatrix);

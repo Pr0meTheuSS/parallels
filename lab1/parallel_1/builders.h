@@ -1,6 +1,5 @@
 // Copyright 2023 Olimpiev Y. Y.
 #pragma once
-#define DEBUG
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>

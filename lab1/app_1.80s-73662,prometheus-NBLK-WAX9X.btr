@@ -1,0 +1,11 @@
+
+app_1:73662 terminated with signal 6 at PC=7f2380e96a7c SP=7fff05d23f80.  Backtrace:
+/lib/x86_64-linux-gnu/libc.so.6(pthread_kill+0x12c)[0x7f2380e96a7c]
+/lib/x86_64-linux-gnu/libc.so.6(raise+0x16)[0x7f2380e42476]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0xd3)[0x7f2380e287f3]
+/lib/x86_64-linux-gnu/libc.so.6(+0x2871b)[0x7f2380e2871b]
+/lib/x86_64-linux-gnu/libc.so.6(+0x39e96)[0x7f2380e39e96]
+parallel_1/Exec/app_1(+0x2257)[0x56032364c257]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x7f2380e29d90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x7f2380e29e40]
+parallel_1/Exec/app_1(+0x23d5)[0x56032364c3d5]
