@@ -120,7 +120,7 @@ double ConjugateGradientsMethodIteration(
     double betta = 0.0;
     double tmp = 0.0;
  
-    openmp_gsl_blas_dgemv(CblasNoTrans, 1.0, A, z, 0.0, tmpVec, jobSizes, displs);        
+    openmp_gsl_blas_dgemv(CblasNoTrans, 1.0, A, z, 0.0, tmpVec, jobSizes, displs);
     // Calc (r_n, r_n). double tmp <- (r_n, r_n)
     openmp_gsl_blas_ddot(r, r, &tmp, jobSizes, displs);
 

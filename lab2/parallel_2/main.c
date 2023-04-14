@@ -1,4 +1,5 @@
 // Copyright 2023 Olimpiev Y. Y.
+// TODO: работает правильно на одном потоке, надо посмотреть что происходит при большем числе потоков.
 #include <assert.h>
 #include <omp.h>
 #include <stdio.h>
@@ -54,10 +55,8 @@ void openmp_gsl_blas_dgemv(
         assert(displs);
 
 
-        int rank = 0;
-        #  pragma private(rank)
         {
-            rank = omp_get_thread_num();
+            int rank = omp_get_thread_num();
             gsl_vector* resPart = gsl_vector_calloc(jobSizes[rank]);
             assert(resPart);
 
@@ -116,12 +115,21 @@ double ConjugateGradientsMethodIteration(
     double betta = 0.0;
     double tmp = 0.0;
     
-    openmp_gsl_blas_dgemv(CblasNoTrans, 1.0, A, z, 0.0, tmpVec, jobSizes, displs);        
+    int rank = omp_get_thread_num();
+    gsl_vector* resPart = gsl_vector_calloc(jobSizes[rank]);
+    assert(resPart);
+
+    gsl_matrix_view subMatrixA = gsl_matrix_submatrix(A, displs[rank], 0, jobSizes[rank], A->size2);
+    gsl_blas_dgemv(CblasNoTrans, 1.0, &subMatrixA.matrix, z, 0.0, resPart);
+
+    memcpy(tmpVec->data + displs[rank], resPart->data, sizeof(double) * jobSizes[rank]);
+    gsl_vector_free(resPart);
+
+    #pragma omp single 
+    {
     // Calc (r_n, r_n). double tmp <- (r_n, r_n)
     gsl_blas_ddot(r, r, &tmp);
-
     // Calc (A * z_n, z_n).
-    assert(z->size == tmpVec->size);
     gsl_blas_ddot(tmpVec, z, &alpha);
     // Calc (r_n, r_n) / (A * z_n, z_n).
     alpha = tmp / alpha;
@@ -130,16 +138,17 @@ double ConjugateGradientsMethodIteration(
     // Calc r_(n + 1) = r_n - aplha * (A * z_n).
     gsl_blas_daxpy(-alpha, tmpVec, r);
     // Calc (r_(n + 1), r_(n + 1)).
-    gsl_blas_ddot(r, r, &betta );
+    gsl_blas_ddot(r, r, &betta);
     // Calc betta_(n + 1) = (r_(n + 1), r_(n + 1)) / (r_n, r_n).
     betta /= tmp;
 
     gsl_vector_set_zero(tmpVec);
-    gsl_blas_daxpy(betta, z, tmpVec );
-    gsl_blas_daxpy(1.0, r, tmpVec );
+    gsl_blas_daxpy(betta, z, tmpVec);
+    gsl_blas_daxpy(1.0, r, tmpVec);
 
     gsl_vector_memcpy(z, tmpVec);
     err = gsl_blas_dnrm2(r) / bNorm;
+    }
  
     return err;
 }
@@ -169,7 +178,8 @@ gsl_vector* ConjugateGradientsMethod(gsl_matrix* A, gsl_vector* B, gsl_vector* X
     double normB = gsl_blas_dnrm2(B);
 
     size_t numThreads = omp_get_max_threads();
-    
+    printf("max threads is:%lu\n", numThreads);
+
     size_t* jobSizes = (size_t*)calloc(numThreads, sizeof(size_t));
     assert(jobSizes);
 
@@ -195,8 +205,10 @@ gsl_vector* ConjugateGradientsMethod(gsl_matrix* A, gsl_vector* B, gsl_vector* X
     }
     time_t start = time(0);
 
-    # pragma omp parallel default(shared)
+    # pragma omp parallel
     {
+        printf("Threads amount: %d\n", omp_get_thread_num());
+
         while(err > eps) {
             err = ConjugateGradientsMethodIteration(A, X, r, z, tmpVec, normB, jobSizes, displs);
         }
