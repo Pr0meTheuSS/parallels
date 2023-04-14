@@ -20,13 +20,13 @@ build_prll_2:
 
 .PHONY: meas_time_seq
 meas_time_seq:
-	time ./sequentional/Exec/app matrixes/matrix_128_128.dat >> TM_seq; \
+	./sequentional/Exec/app matrixes/matrix_128_128.dat >> TM_seq; \
 
 .PHONY: meas_time_prll_1
 meas_time_prll_1:
 	for t in 1 2 4 8 16; do \
 		export OMP_NUM_THREADS=$$t; \
-		./parallel_1/Exec/app matrixes/matrix_128_128.dat; \
+		./parallel_1/Exec/app matrixes/matrix_128_128.dat >> TM_prll_1; \
 	done
 
 
@@ -34,6 +34,6 @@ meas_time_prll_1:
 meas_time_prll_2:
 	for t in 1 2 4 8 16; do \
 		export OMP_NUM_THREADS=$$t; \
-		./parallel_2/Exec/app matrixes/matrix_128_128.dat; \
+		./parallel_2/Exec/app matrixes/matrix_128_128.dat >> TM_prll_2; \
 	done
 
